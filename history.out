@@ -1,0 +1,58 @@
+    1  rm ~/.bash_history
+    1  rm ~/.bash_history
+    2  mkdir -p ~/labs/lab1
+    3  cd ~/labs/lab1
+    4  sudo groupadd students
+    5  sudo useradd -u 1234 -g students -m -s /bin/bash user1
+    6  sudo passwd user1
+    7  sudo chage -M 90 user1
+    8  sudo chage -l user1
+    9  id user1
+   10 sudo getent passwd user1
+   11 sudo getent group students
+   12 sudo chage -l user1
+   13 sudo find / -type f -perm -4000 -exec ls -ldb {} \; 2>/dev/null | tee ~/suid_files.out
+   14 ps -eo pid,ruid,euid,comm | awk '$2 != 0 && $3 == 0' | tee ~/euid_root_processes.out
+   15 whoami
+   16 ps -eo pid,euid,ruid,comm | awk '$2 == 0 && $3 != 0'
+   17 pwd
+   18 ps -eo pid,euid,ruid,comm | awk '$2 == 0 && $3 != 0' > ~/labs/lab1/elevated_processes.txt
+   19 cd ~/labs/lab1
+   20 echo test > victim.txt
+   21 chown nobody victim.txt
+   22 sudo install -o root -g root -m 0755 /usr/bin/chown ~/labs/lab1/mychown
+   23 sudo chown root:root ~/labs/lab1/mychown
+   24 sudo chmod 4755 ~/labs/lab1/mychown
+   25 ls -l ~/labs/lab1/mychown
+   26 echo test > victim.txt
+   27 ./mychown nobody victim.txt
+   28 ls -l victim.txt
+   29 ps -eo pid,euid,ruid,comm | awk '$2 == 0 && $3 != 0'
+   30 ls -l mychown victim.txt > result.txt
+   31 echo "=== без привилегий ===" >> result.txt
+   32 (chown nobody victim.txt 2>&1) >> result.txt || echo "Permission denied (expected)" >> result.txt
+   33 echo "=== через SUID-копию ===" >> result.txt
+   34 ./mychown root victim.txt && ls -l victim.txt >> result.txt
+   35 ps -eo pid,euid,ruid,comm | awk '$2 == 0 && $3 != 0'
+   36 sudo visudo
+   37 fg
+   38 sudo visudo
+   39 echo 'user1 ALL=(ALL) NOPASSWD: /usr/bin/timedatectl' | sudo EDITOR='tee -a' visudo
+   40 fg
+   41 sudo -l -U user1
+   42 su - user1
+   43 pwd
+   44 {
+      echo "=== sudoers rules (via rts) ==="
+      sudo grep -E 'user1' /etc/sudoers /etc/sudoers.d/* 2>/dev/null || echo "Rules found in sudo -l output"
+      echo
+      echo "=== sudo -l for user1 (via rts) ==="
+      sudo -l -U user1
+      echo
+      echo "=== Demo: timedatectl via user1 ==="
+      sudo -u user1 bash -c 'timedatectl status'
+      echo
+      echo "=== Test time change via user1 (NTP toggle) ==="
+      sudo -u user1 bash -c 'sudo timedatectl set-ntp false && echo "NTP disabled (test)"'
+      } 2>&1 | tee -a result.txt
+   45 echo "Мой уникальный номер М265983"

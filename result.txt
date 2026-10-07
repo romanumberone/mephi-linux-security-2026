@@ -1,3 +1,9 @@
+-rwsr-xr-x. 1 root   root 65840 окт  7 12:03 mychown
+-rw-r--r--. 1 nobody rts      5 окт  7 12:05 victim.txt
+=== без привилегий ===
+chown: изменение владельца 'victim.txt': Операция не позволена
+=== через SUID-копию ===
+-rw-r--r--. 1 root rts 5 окт  7 12:05 victim.txt
 === sudoers rules (via rts) ===
 /etc/sudoers:user1 ALL=(ALL) NOPASSWD: /usr/bin/timedatectl
 Rules found in sudo -l output
