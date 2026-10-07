@@ -1,0 +1,5 @@
+=== Права на домашнюю директорию ===
+File: /home/rts | Mode: 700 | Owner: rts (1000) | Group: rts (1000)
+
+=== Права на утилиту mychown ===
+File: ./mychown | Mode: 4755 | Owner: root (0) | Group: root (0)
